@@ -6,6 +6,7 @@ import reportWebVitals from "./reportWebVitals";
 import App from "./App";
 import { UserPrtovider } from "./contexts/user.context";
 import { ProductsProvider } from "./contexts/product.context";
+import { CartProvider } from "./contexts/cart.context";
 
 import "./index.scss";
 
@@ -14,7 +15,9 @@ ReactDOM.render(
 		<BrowserRouter>
 			<UserPrtovider>
 				<ProductsProvider>
-					<App />
+					<CartProvider>
+						<App />
+					</CartProvider>
 				</ProductsProvider>
 			</UserPrtovider>
 		</BrowserRouter>
