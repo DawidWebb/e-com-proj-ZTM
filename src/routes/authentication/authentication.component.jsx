@@ -7,8 +7,11 @@ import {
 	// signInGoogleRedirect,
 } from "../../utils/firebase/firebase.utils";
 import SignUpForm from "../../components/sign-up-form/sign-up-form.component";
+import SignInForm from "../../components/sign-in-form/sign-in-form.component";
 
-const SignIn = () => {
+import "./authentication.styles.scss";
+
+const Authentication = () => {
 	// useEffect(async () => {
 	// 	const response = await getRedirectResult(auth);
 	// 	if (response) {
@@ -22,12 +25,12 @@ const SignIn = () => {
 	};
 
 	return (
-		<div>
-			<h1>Sign in Page</h1>
-			<button onClick={logGoogleUser}>Sign in with Google</button>
+		//  <button onClick={logGoogleUser}>Sign in with Google</button>
+		<div className="authentication-container">
+			<SignInForm />
 			<SignUpForm />
 		</div>
 	);
 };
 
-export default SignIn;
+export default Authentication;
