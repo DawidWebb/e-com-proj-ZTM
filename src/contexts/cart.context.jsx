@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useState, useReducer } from "react";
 
 const addCartItem = (cartItems, productToAdd) => {
 	const existingCartItem = cartItems.find((cartItem) => cartItem.id === productToAdd.id);
@@ -40,23 +40,71 @@ export const CartContext = createContext({
 	clearItemFromCart: () => {},
 });
 
+const CART_ACTIONS_TYPES = {
+	SET_CART_ITEMS: "SET_CART_ITEMS",
+	SET_CART_OPEN: "SET_CART_OPEN",
+};
+
+const INITIAL_STATE = {
+	isCartOpen: false,
+	cartItems: [],
+};
+
+const cartReducer = (state, action) => {
+	const { type, payload } = action;
+
+	switch (type) {
+		case CART_ACTIONS_TYPES.SET_CART_ITEMS:
+			return {
+				...state,
+				...payload,
+			};
+		case CART_ACTIONS_TYPES.SET_CART_OPEN:
+			return {
+				...state,
+				isCartOpen: payload,
+			};
+		default:
+			throw new Error(`Unhandled type: ${type} in cartReducer`);
+	}
+};
+
 export const CartProvider = ({ children }) => {
-	const [isCartOpen, setIsCartOpen] = useState(false);
-	const [cartItems, setCartItems] = useState([]);
+	const [state, dispatch] = useReducer(cartReducer, INITIAL_STATE);
+
+	const { cartItems, isCartOpen } = state;
+
+	const updateCartItemsReducer = (newCartItems) => {
+		dispatch({ type: CART_ACTIONS_TYPES.SET_CART_ITEMS, payload: { cartItems: newCartItems } });
+	};
 
 	const addItemToCart = (productToAdd) => {
-		setCartItems(addCartItem(cartItems, productToAdd));
+		const newCartItems = addCartItem(cartItems, productToAdd);
+		updateCartItemsReducer(newCartItems);
 	};
 
 	const removeItemFromCart = (cartItemToRemove) => {
-		setCartItems(removeCartItem(cartItems, cartItemToRemove));
+		const newCartItems = removeCartItem(cartItems, cartItemToRemove);
+		updateCartItemsReducer(newCartItems);
 	};
 
 	const clearItemFromCart = (cartItemToClear) => {
-		setCartItems(clearCartItem(cartItems, cartItemToClear));
+		const newCartItems = clearCartItem(cartItems, cartItemToClear);
+		updateCartItemsReducer(newCartItems);
 	};
 
-	const value = { isCartOpen, setIsCartOpen, addItemToCart, cartItems, removeItemFromCart, clearItemFromCart };
+	const setIsCartOpen = (bool) => {
+		dispatch({ type: CART_ACTIONS_TYPES.SET_CART_OPEN, payload: bool });
+	};
+
+	const value = {
+		isCartOpen,
+		setIsCartOpen,
+		addItemToCart,
+		cartItems,
+		removeItemFromCart,
+		clearItemFromCart,
+	};
 
 	return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 };
