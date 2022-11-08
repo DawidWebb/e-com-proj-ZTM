@@ -1,10 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import { Provider } from "react-redux";
+import { store } from "./store/store";
 import { BrowserRouter } from "react-router-dom";
 import reportWebVitals from "./reportWebVitals";
 
 import App from "./App";
-import { UserPrtovider } from "./contexts/user.context";
 import { CategoriesProvider } from "./contexts/categories.context";
 import { CartProvider } from "./contexts/cart.context";
 
@@ -12,15 +13,15 @@ import "./index.scss";
 
 ReactDOM.render(
 	<React.StrictMode>
-		<BrowserRouter>
-			<UserPrtovider>
+		<Provider store={store}>
+			<BrowserRouter>
 				<CategoriesProvider>
 					<CartProvider>
 						<App />
 					</CartProvider>
 				</CategoriesProvider>
-			</UserPrtovider>
-		</BrowserRouter>
+			</BrowserRouter>
+		</Provider>
 	</React.StrictMode>,
 	document.getElementById("root"),
 );
