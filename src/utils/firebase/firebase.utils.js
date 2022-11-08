@@ -61,14 +61,7 @@ export const getCategoriesAndDocuments = async () => {
 	const querySnapshot = await getDocs(g);
 
 	// tworzenie obiektu danych z danych pozyskanych z Firebase
-	const categoryMap = querySnapshot.docs.reduce((acc, docSnapshot) => {
-		const { title, items } = docSnapshot.data();
-		acc[title.toLowerCase()] = items;
-
-		return acc;
-	}, {});
-
-	return categoryMap;
+	return querySnapshot.docs.map((docSnapshot) => docSnapshot.data());
 };
 
 // Pobieramy dane z auth service i wrzucamy je do db firestore
