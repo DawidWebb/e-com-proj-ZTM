@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import ProductCard from "../product-card/product-card.component";
+
 import { DivCategoryPreviewContainer, SpanTitle, DivPreview } from "./category-preview.styles";
 
 const CategoryPreview = ({ title, products }) => {

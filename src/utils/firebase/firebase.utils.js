@@ -61,14 +61,7 @@ export const getCategoriesAndDocuments = async () => {
 	const querySnapshot = await getDocs(g);
 
 	// tworzenie obiektu danych z danych pozyskanych z Firebase
-	const categoryMap = querySnapshot.docs.reduce((acc, docSnapshot) => {
-		const { title, items } = docSnapshot.data();
-		acc[title.toLowerCase()] = items;
-
-		return acc;
-	}, {});
-
-	return categoryMap;
+	return querySnapshot.docs.map((docSnapshot) => docSnapshot.data());
 };
 
 // Pobieramy dane z auth service i wrzucamy je do db firestore
@@ -98,7 +91,7 @@ export const createUserDocumentFromAuth = async (userAuth, additionalInformation
 	}
 
 	// jeżeli użytkownik istnieje
-	return userDocRef;
+	return userSnapshot;
 };
 
 export const createAuthUserWithEmailAndPassword = async (email, password) => {
@@ -115,4 +108,17 @@ export const signOutUser = async () => await signOut(auth);
 
 export const onAuthStateChangedListener = (callback) => {
 	onAuthStateChanged(auth, callback);
+};
+
+export const getCurrentUser = () => {
+	return new Promise((res, rej) => {
+		const unsubscribe = onAuthStateChanged(
+			auth,
+			(userAuth) => {
+				unsubscribe();
+				res(userAuth);
+			},
+			rej,
+		);
+	});
 };
