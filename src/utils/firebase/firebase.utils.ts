@@ -8,8 +8,12 @@ import {
 	signInWithEmailAndPassword,
 	signOut,
 	onAuthStateChanged,
+	User,
+	NextOrObserver
 } from "firebase/auth";
-import { getFirestore, doc, getDoc, setDoc, collection, writeBatch, query, getDocs } from "firebase/firestore";
+import { getFirestore, doc, getDoc, setDoc, collection, writeBatch, query, getDocs, QueryDocumentSnapshot } from "firebase/firestore";
+import { Category } from "../../store/categories/categories.types";
+
 
 const firebaseConfig = {
 	apiKey: "AIzaSyCKhVSsDiv6Z7I7W5_EipxeDZ4caR_azhM",
@@ -36,8 +40,12 @@ export const signInGoogleRedirect = () => signInWithRedirect(auth, googleProvide
 // utworzenie bazy
 export const db = getFirestore();
 
+export type ObjectToAdd = {
+	title: string;
+};
+
 // dodawanie kolekcji i dokumentów do Firestore
-export const addCollectionAndDocuments = async (collectionKey, objectsToAdd) => {
+export const addCollectionAndDocuments = async <T extends ObjectToAdd>(collectionKey: string, objectsToAdd: T[]): Promise<void> => {
 	const collectionRef = collection(db, collectionKey);
 
 	const batch = writeBatch(db);
@@ -48,11 +56,12 @@ export const addCollectionAndDocuments = async (collectionKey, objectsToAdd) => 
 	});
 
 	await batch.commit();
-	console.log("done");
+
 };
 
+
 //pobranie danych z Firestore
-export const getCategoriesAndDocuments = async () => {
+export const getCategoriesAndDocuments = async (): Promise<Category[]> => {
 	// referencja do colelekcji danej bazy danych z jej nazwą
 	const collectionRef = collection(db, "categories");
 
@@ -61,11 +70,21 @@ export const getCategoriesAndDocuments = async () => {
 	const querySnapshot = await getDocs(g);
 
 	// tworzenie obiektu danych z danych pozyskanych z Firebase
-	return querySnapshot.docs.map((docSnapshot) => docSnapshot.data());
+	return querySnapshot.docs.map((docSnapshot) => docSnapshot.data() as Category);
+};
+
+export type AdditionalInformation = {
+	displayName?: string;
+};
+
+export type UserData = {
+	createAt: Date;
+	displayName: string;
+	email: string;
 };
 
 // Pobieramy dane z auth service i wrzucamy je do db firestore
-export const createUserDocumentFromAuth = async (userAuth, additionalInformation = {}) => {
+export const createUserDocumentFromAuth = async (userAuth: User, additionalInformation = {} as AdditionalInformation): Promise<void | QueryDocumentSnapshot<UserData>> => {
 	if (!userAuth) return;
 	// trzy parametry: baza danych, Nasza nazwa dokumentu, uniq id - w tym mprzypadku z response firebase
 	const userDocRef = doc(db, "user", userAuth.uid);
@@ -91,21 +110,35 @@ export const createUserDocumentFromAuth = async (userAuth, additionalInformation
 	}
 
 	// jeżeli użytkownik istnieje
-	return userDocRef;
+	return userSnapshot as QueryDocumentSnapshot<UserData>;
 };
 
-export const createAuthUserWithEmailAndPassword = async (email, password) => {
+export const createAuthUserWithEmailAndPassword = async (email: string, password: string) => {
 	if (!email || !password) return;
 	return await createUserWithEmailAndPassword(auth, email, password);
 };
 
-export const signInAuthUserWithEmailAndPassword = async (email, password) => {
+export const signInAuthUserWithEmailAndPassword = async (email: string, password: string) => {
 	if (!email || !password) return;
 	return await signInWithEmailAndPassword(auth, email, password);
 };
 
 export const signOutUser = async () => await signOut(auth);
 
-export const onAuthStateChangedListener = (callback) => {
+export const onAuthStateChangedListener = (callback: NextOrObserver<User>) => {
 	onAuthStateChanged(auth, callback);
+};
+
+
+export const getCurrentUser = (): Promise<User | null> => {
+	return new Promise((res, rej) => {
+		const unsubscrie = onAuthStateChanged(
+			auth,
+			(userAuth) => {
+				unsubscrie();
+				res(userAuth);
+			},
+			rej
+		);
+	});
 };
