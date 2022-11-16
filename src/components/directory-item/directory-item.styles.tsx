@@ -1,14 +1,18 @@
 import styled from "styled-components";
 
-export const DivBackgroundImage = styled.div`
+type BackgroundImageProps = {
+	imageUrl: string;
+};
+
+export const BackgroundImage = styled.div<BackgroundImageProps>`
 	width: 100%;
 	height: 100%;
 	background-size: cover;
 	background-position: center;
-	background-image: ${({ imageUrl }) => `url(${imageUrl})`};
+	background-image: ${ ({ imageUrl }) => `url(${ imageUrl })` };
 `;
 
-export const DivBody = styled.div`
+export const Body = styled.div`
 	height: 90px;
 	padding: 0 25px;
 	display: flex;
@@ -32,7 +36,7 @@ export const DivBody = styled.div`
 	}
 `;
 
-export const DivDirectoryItemContainer = styled.div`
+export const DirectoryItemContainer = styled.div`
 	min-width: 30%;
 	height: 240px;
 	flex: 1 1 auto;
@@ -46,12 +50,12 @@ export const DivDirectoryItemContainer = styled.div`
 	&:hover {
 		cursor: pointer;
 
-		& ${DivBackgroundImage} {
+		& ${ BackgroundImage } {
 			transform: scale(1.1);
 			transition: transform 6s cubic-bezier(0.25, 0.45, 0.45, 0.95);
 		}
 
-		& ${DivBody} {
+		& ${ Body } {
 			opacity: 0.9;
 		}
 	}

@@ -1,11 +1,17 @@
 import { useDispatch, useSelector } from "react-redux";
 import { addItemToCart } from "../../store/cart/cart.action";
+import { FC } from 'react';
+import { CategoryItem } from '../../store/categories/categories.types';
 import { selectCartItems } from "../../store/cart/cart.selector";
 import Button, { BUTTON_TYPE_CLASSES } from "../button/button.component";
 
 import { DivProductCardContainer, DivFooter, SpanName, SpanPrice } from "./product-card.styles";
 
-const ProductCard = ({ product }) => {
+type ProductCardProps = {
+	product: CategoryItem;
+};
+
+const ProductCard: FC<ProductCardProps> = ({ product }) => {
 	const { name, price, imageUrl } = product;
 
 	const cartItems = useSelector(selectCartItems);
@@ -18,12 +24,12 @@ const ProductCard = ({ product }) => {
 
 	return (
 		<DivProductCardContainer>
-			<img src={imageUrl} alt={`${name}`} />
+			<img src={ imageUrl } alt={ `${ name }` } />
 			<DivFooter>
-				<SpanName>{name}</SpanName>
-				<SpanPrice>{price}</SpanPrice>
+				<SpanName>{ name }</SpanName>
+				<SpanPrice>{ price }</SpanPrice>
 			</DivFooter>
-			<Button buttonType={BUTTON_TYPE_CLASSES.inverted} onClick={addProductToCart}>
+			<Button buttonType={ BUTTON_TYPE_CLASSES.inverted } onClick={ addProductToCart }>
 				Add to cart
 			</Button>
 		</DivProductCardContainer>
