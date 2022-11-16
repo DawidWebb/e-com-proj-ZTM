@@ -7,8 +7,12 @@ import ProductCard from "../../components/product-card/product-card.component";
 
 import { H2CategoryTitle, DivCategoryContainer } from "./category.styles";
 
+type CategoryRouteParams = {
+	category: string;
+};
+
 const Category = () => {
-	const { category } = useParams();
+	const { category } = useParams<keyof CategoryRouteParams>() as CategoryRouteParams;
 	const categoriesMap = useSelector(selectCategoriesMap);
 	const isLoading = useSelector(selectIsCategoriesIsLoading);
 
@@ -20,15 +24,15 @@ const Category = () => {
 
 	return (
 		<Fragment>
-			<H2CategoryTitle className="category-title">{category}</H2CategoryTitle>
+			<H2CategoryTitle className="category-title">{ category }</H2CategoryTitle>
 
-			{isLoading ? (
+			{ isLoading ? (
 				<Spinner />
 			) : (
 				<DivCategoryContainer className="category-container">
-					{products && products.map((product) => <ProductCard key={product.id} product={product} />)}
+					{ products && products.map((product) => <ProductCard key={ product.id } product={ product } />) }
 				</DivCategoryContainer>
-			)}
+			) }
 		</Fragment>
 	);
 };

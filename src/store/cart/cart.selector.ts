@@ -7,3 +7,10 @@ const selectCartReducer = (state: RootState): CartState => state.cart;
 export const selectCartItems = createSelector([selectCartReducer], (cart) => cart.cartItems);
 
 export const selectIscartOpen = createSelector([selectCartReducer], (cart) => cart.isCartOpen);
+
+export const selectCartTotal = createSelector([selectCartItems], (cartItems) =>
+    cartItems.reduce(
+        (total, cartItem) => total + cartItem.quantity * cartItem.price,
+        0
+    )
+);

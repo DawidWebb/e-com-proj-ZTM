@@ -23,6 +23,5 @@ export const SpanItemCount = styled.span`
 `;
 
 export const ShoppinIcon = styled(ShoppinSvg)`
-	width: 24px;
-	height: 24px;
+
 `;
